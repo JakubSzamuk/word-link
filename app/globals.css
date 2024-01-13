@@ -5,16 +5,27 @@
 html {
   min-height: 100svh;
   width: 100%;
+  background: var(
+    --Background,
+    linear-gradient(121deg, #14161a 21.89%, rgba(22, 29, 41, 0.87) 90.44%)
+  );
 }
 
 .main_background {
-  background: var(--Background, linear-gradient(121deg, #14161A 21.89%, rgba(22, 29, 41, 0.87) 90.44%));
+  background: var(
+    --Background,
+    linear-gradient(121deg, #14161a 21.89%, rgba(22, 29, 41, 0.87) 90.44%)
+  );
 }
 .primary_background {
-  border-radius: 40px;
-  background: rgba(29, 36, 44, 0.50); 
+  /* border-radius: 40px; */
+  background: rgba(29, 36, 44, 0.7);
 }
 
 .primary_font {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: "Share Tech Mono", monospace;
+}
+
+input:focus {
+  outline: none;
 }
