@@ -11,11 +11,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
 
-  let newUser = await prisma.authorizedUser.create({
+  let updatedUser = await prisma.authorizedUser.update({
+    where: {
+      id: body.id,
+    },
     data: {
       email: body.email,
       super_admin: body.superUser,
     },
   });
-  return NextResponse.json({ code: 200, data: newUser });
+  return NextResponse.json({ code: 200, data: updatedUser });
 }

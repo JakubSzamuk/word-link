@@ -1,22 +1,33 @@
-import { PrismaClient } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { getSession, useSession } from "next-auth/react";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
+
+import { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+
+import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Adapter } from "next-auth/adapters";
 
 const prisma = new PrismaClient();
 
-export async function middleware(request: NextRequest) {
-  const session = useSession();
+export async function middleware(req: NextRequest, res: NextResponse) {
+  // const session = await getSession({ req });
+  // const session = await getServerSession(authOptions);
 
-  let user = await prisma.user.findFirst({
-    where: {
-      email: session.data?.user?.email,
-    },
-  });
-
-  // session.data?.user?.email
+  // console.log(JSON.stringify(authOptions));
+  // // let user = await prisma.authorizeduser.findFirst({
+  // //   where: {
+  // //     email: session!.user?.email,
+  // //   },
+  // // });
+  // // console.log(user);
+  // // session.data?.user?.email
+  // return NextResponse.json(session);
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/api/:path*",
+  matcher: "/api/users/:path*",
 };

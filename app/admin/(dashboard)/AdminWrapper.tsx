@@ -19,16 +19,18 @@ const AdminWrapper = ({ children }) => {
   // }
 
   return (
-    <div className="w-2/3 mt-16">
+    <div className="w-11/12 xlg:w-2/3 mt-16">
       <h1 className="text-white primary_font text-standard mb-1">
         Welcome to WordLink, {session?.user?.name?.split(" ")[0]}
       </h1>
-      <div className="primary_background rounded-lg p-4 flex gap-4 min-h-[80svh] min-w-4/5">
+      <div className="primary_background rounded-lg p-4 flex gap-4 min-h-[80svh] min-w-4/5 flex-col xlg:flex-row">
         <div className="flex flex-col gap-2 text-white primary_font text-button min-w-64">
           <button
             onClick={() => push("/admin/quizzes")}
             className={`px-10 py-2 rounded-md ${
-              pathname === "/admin/quizzes" ? "bg-secondary" : "bg-tertiary"
+              pathname.slice(0, 14) === "/admin/quizzes"
+                ? "bg-secondary"
+                : "bg-tertiary"
             }`}
           >
             Quizzes

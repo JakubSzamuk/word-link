@@ -17,6 +17,9 @@ const config: Config = {
         secondary: "#343D47",
         tertiary: "#1D242C",
       },
+      screens: {
+        xlg: "1200px",
+      },
     },
   },
   plugins: [],

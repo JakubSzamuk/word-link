@@ -10,12 +10,14 @@ export const revalidate = 0;
 export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
-
-  let newUser = await prisma.authorizedUser.create({
-    data: {
-      email: body.email,
-      super_admin: body.superUser,
-    },
-  });
-  return NextResponse.json({ code: 200, data: newUser });
+  try {
+    let newUser = await prisma.authorizedUser.delete({
+      where: {
+        id: body.userId,
+      },
+    });
+    return NextResponse.json({ code: 200 });
+  } catch {
+    return NextResponse.json({ code: 500 });
+  }
 }

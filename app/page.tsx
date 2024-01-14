@@ -13,21 +13,6 @@ export default function Home() {
         <div className="flex mt-4 relative">
           <m.button
             animate={codeController}
-            variants={{
-              show: {
-                opacity: 0,
-              },
-              hide: {
-                opacity: 1,
-              },
-            }}
-            initial="hide"
-            className="primary_background py-2 px-10 rounded-full text-button"
-          >
-            Play Daily
-          </m.button>
-          <m.button
-            animate={codeController}
             onClick={() => codeController.start("show")}
             variants={{
               show: {

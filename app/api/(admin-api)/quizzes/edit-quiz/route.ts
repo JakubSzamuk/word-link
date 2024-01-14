@@ -11,11 +11,21 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
 
-  let newUser = await prisma.authorizedUser.create({
+  let newQuiz = await prisma.quiz.update({
+    where: {
+      id: body.id,
+      creator: session?.user?.email,
+    },
     data: {
-      email: body.email,
-      super_admin: body.superUser,
+      name: body.name,
+      group1: JSON.stringify(body.groups[0]),
+      group2: JSON.stringify(body.groups[1]),
+      group3: JSON.stringify(body.groups[2]),
+      group4: JSON.stringify(body.groups[3]),
+
+      creator: session?.user?.email,
     },
   });
-  return NextResponse.json({ code: 200, data: newUser });
+
+  return NextResponse.json({ code: 200, data: newQuiz });
 }

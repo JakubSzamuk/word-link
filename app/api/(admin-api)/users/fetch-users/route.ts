@@ -9,25 +9,10 @@ export const revalidate = 0;
 
 export async function GET(req: NextRequest, res: NextResponse) {
   // const body = await req.json();
+
   const session = await getServerSession(authOptions);
 
-  return NextResponse.json(JSON.stringify({ data: "H" }));
-  // if (session?.user) {
-  // const userId = (await prisma.user.findFirst({
-  //   where: {
-  //     email: session?.user?.email,
-  //   },
-  // }))!.id;
-  // const accountData = await prisma.user.findFirst({
-  //   where: {
-  //     id: userId,
-  //   },
-  // });
-  // const allDocuments = await prisma.savedDocuments.findMany({
-  //   where: {
-  //     uid: userId,
-  //   },
-  // });
-  // return NextResponse.json({ account: accountData, docs: allDocuments });
-  // }
+  let users = await prisma.authorizedUser.findMany();
+
+  return NextResponse.json({ code: 200, data: users });
 }
