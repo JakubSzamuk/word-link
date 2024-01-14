@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import SavedQuiz from "./SavedQuiz";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { signOut } from "next-auth/react";
 
 export type SavedQuizProps = {
   id: string;
@@ -10,7 +11,7 @@ export type SavedQuizProps = {
   code: number;
 };
 
-const page = () => {
+const Page = () => {
   const [quizzes, setQuizzes] = useState<SavedQuizProps[]>([]);
   const { push } = useRouter();
 
@@ -19,6 +20,10 @@ const page = () => {
       setQuizzes(res.data.data);
     });
   });
+  if (quizzes == null) {
+    push("/admin");
+    signOut();
+  }
 
   return (
     <div className="text-white primary_font w-full">
@@ -33,7 +38,9 @@ const page = () => {
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
-        {quizzes.length === 0 ? (
+        {quizzes == null ? (
+          <p>Unauthorized</p>
+        ) : quizzes.length == 0 ? (
           <p>Loading...</p>
         ) : (
           quizzes.map((quiz) => <SavedQuiz key={quiz.code} {...quiz} />)
@@ -43,4 +50,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

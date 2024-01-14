@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
-const page = ({ params }: { params: { "quiz-id": string } }) => {
+const Page = ({ params }: { params: { "quiz-id": string } }) => {
   const { push } = useRouter();
   const [quizId, setQuizId] = useState();
   const [quizName, setQuizName] = useState("");
@@ -86,7 +86,7 @@ const page = ({ params }: { params: { "quiz-id": string } }) => {
         />
 
         {[...(Array(4).keys() as any)].map((index) => (
-          <div className="w-full">
+          <div className="w-full" key={index}>
             <p>Group {index + 1}</p>
             <div className="flex gap-4 flex-col xlg:flex-row">
               <input
@@ -105,7 +105,10 @@ const page = ({ params }: { params: { "quiz-id": string } }) => {
                 <p className="py-2 w-auto flex items-center h-full gap-2 pl-2">
                   {groups[index].words.map((word, wordIndex) => {
                     return (
-                      <span className="bg-tertiary rounded-md px-2 flex items-center">
+                      <span
+                        className="bg-tertiary rounded-md px-2 flex items-center"
+                        key={wordIndex}
+                      >
                         {word}
                         <button
                           className="ml-1 bg-secondary flex rounded-sm"
@@ -191,4 +194,4 @@ const page = ({ params }: { params: { "quiz-id": string } }) => {
   );
 };
 
-export default page;
+export default Page;

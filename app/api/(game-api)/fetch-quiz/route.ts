@@ -6,12 +6,12 @@ import { getServerSession } from "next-auth";
 const prisma = new PrismaClient();
 export const revalidate = 0;
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
 
   let quiz = await prisma.quiz.findFirst({
     where: {
-      id: body.id,
+      code: body.quiz_code,
     },
   });
   if (quiz == null) {

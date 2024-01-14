@@ -9,12 +9,16 @@ export type AuthorizedUserProps = {
   super_admin: boolean;
 };
 
-const page = () => {
+const Page = () => {
   const [users, setUsers] = useState<AuthorizedUserProps[]>([]);
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
 
   useEffect(() => {
     axios.get("/api/users/fetch-users").then((data) => {
-      setUsers(data.data.data);
+      if (data.data.data != "unauthorized") {
+        setUsers(data.data.data);
+        setIsAllowed(true);
+      }
     });
   }, []);
 
@@ -24,25 +28,42 @@ const page = () => {
 
   return (
     <div className="text-white primary_font w-full">
-      <div className="flex items-center w-full">
-        <h1 className="text-standard">Here is a list of authorized users.</h1>
-        <button
-          className="text-button py-1 px-12 rounded-md bg-secondary ml-auto"
-          onClick={() =>
-            setUsers([...users, { id: "", email: "", super_admin: false }])
-          }
-        >
-          New User
-        </button>
-      </div>
+      {users == null ? (
+        isAllowed ? (
+          <p>Unauthorized</p>
+        ) : (
+          <p>Loading...</p>
+        )
+      ) : (
+        <>
+          <div className="flex items-center w-full">
+            <h1 className="text-standard">
+              Here is a list of authorized users.
+            </h1>
+            <button
+              className="text-button py-1 px-12 rounded-md bg-secondary ml-auto"
+              onClick={() =>
+                setUsers([...users, { id: "", email: "", super_admin: false }])
+              }
+            >
+              New User
+            </button>
+          </div>
 
-      <div className="mt-4 flex flex-col gap-2 overflow-y-scroll">
-        {users.map((user, index) => (
-          <AuthorizedUser key={index} {...user} delete_user={deleteUser} />
-        ))}
-      </div>
+          <div className="mt-4 flex flex-col gap-2 overflow-y-scroll">
+            {users.length != 0 &&
+              users.map((user, index) => (
+                <AuthorizedUser
+                  key={index}
+                  {...user}
+                  delete_user={deleteUser}
+                />
+              ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
-export default page;
+export default Page;

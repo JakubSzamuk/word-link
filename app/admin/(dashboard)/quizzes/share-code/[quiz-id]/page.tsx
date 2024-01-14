@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 
-const page = ({ params }: { params: { "quiz-id": string } }) => {
+const Page = ({ params }: { params: { "quiz-id": string } }) => {
   const [quizInfo, setQuizInfo] = useState({});
   const { push } = useRouter();
 
@@ -56,4 +56,4 @@ const page = ({ params }: { params: { "quiz-id": string } }) => {
   );
 };
 
-export default page;
+export default Page;

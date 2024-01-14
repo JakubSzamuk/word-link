@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/route";
+import AllowUser from "../allowedUserCheck";
 
 const prisma = new PrismaClient();
 export const revalidate = 0;
@@ -12,12 +13,22 @@ export async function GET(req: NextRequest, res: NextResponse) {
   if (session?.user?.email == undefined) {
     return NextResponse.json({ status: 401 });
   }
+  if (session == null) {
+    return NextResponse.json({ code: 401, data: null });
+  }
+  if ((await AllowUser(session!.user!.email, prisma)) == false) {
+    return NextResponse.json({ code: 401, data: null });
+  }
 
   let user = await prisma.user.findUnique({
     where: {
       email: session!.user!.email,
     },
   });
+
+  if (user == null) {
+    return NextResponse.json({ code: 401, data: null });
+  }
 
   let quizzes;
   if (!user?.super_admin) {
@@ -26,7 +37,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
         creator: session?.user?.email,
       },
     });
-  } else {
+  } else if (user?.super_admin) {
     quizzes = await prisma.quiz.findMany();
   }
 

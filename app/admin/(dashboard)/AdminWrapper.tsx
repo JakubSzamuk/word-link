@@ -6,12 +6,12 @@ import React from "react";
 
 const AdminWrapper = ({ children }) => {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const { push } = useRouter();
   if (status === "unauthenticated") {
     redirect("/admin/login");
     return;
   }
-  const pathname = usePathname();
-  const { push } = useRouter();
 
   // if (pathname === "/admin") {
   //   redirect("/admin/quizzes");
