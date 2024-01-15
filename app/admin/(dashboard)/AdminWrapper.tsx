@@ -13,11 +13,6 @@ const AdminWrapper = ({ children }) => {
     return;
   }
 
-  // if (pathname === "/admin") {
-  //   redirect("/admin/quizzes");
-  //   return;
-  // }
-
   return (
     <div className="w-11/12 xlg:w-2/3 mt-16">
       <h1 className="text-white primary_font text-standard mb-1">

@@ -5,7 +5,7 @@ import { motion as m } from "framer-motion";
 
 const WordTile = ({ word, setWordSelected, selectedWords, op }: any) => {
   let selected = (selectedWords as string[]).includes(word);
-  console.log(op);
+
   return (
     <m.button
       onClick={() => setWordSelected(word, selected ? 1 : 0)}

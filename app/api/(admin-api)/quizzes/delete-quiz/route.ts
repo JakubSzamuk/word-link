@@ -8,7 +8,7 @@ import AllowUser from "../allowedUserCheck";
 const prisma = new PrismaClient();
 export const revalidate = 0;
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
   if (session?.user?.email == undefined) {
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     return NextResponse.json({ code: 401, data: null });
   }
 
-  let user = await prisma.user.findUnique({
+  let user = await prisma.authorizedUser.findUnique({
     where: {
       email: session!.user!.email,
     },
@@ -32,14 +32,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
   if (!user?.super_admin) {
     quizzes = await prisma.quiz.delete({
       where: {
-        id: body.id,
+        id: body.quiz_id,
         creator: session?.user?.email,
       },
     });
-  } else {
+  } else if (user?.super_admin) {
     quizzes = await prisma.quiz.delete({
       where: {
-        id: body.id,
+        id: body.quiz_id,
       },
     });
   }
