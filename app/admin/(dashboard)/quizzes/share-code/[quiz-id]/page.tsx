@@ -36,7 +36,7 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
 
           <p>
             Please enter the following Code into
-            <b>wordlink.JakubSzamuk.co.uk</b>
+            <b> wordlink.JakubSzamuk.co.uk</b>
           </p>
           <p className="text-header">{params["quiz-id"]}</p>
         </div>

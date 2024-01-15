@@ -50,7 +50,7 @@ const Page = () => {
             </button>
           </div>
 
-          <div className="mt-4 flex flex-col gap-2 overflow-y-scroll">
+          <div className="mt-4 flex flex-col gap-2 overflow-y-scroll h-5/6">
             {users.length != 0 &&
               users.map((user, index) => (
                 <AuthorizedUser

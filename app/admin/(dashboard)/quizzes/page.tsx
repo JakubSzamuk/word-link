@@ -37,7 +37,7 @@ const Page = () => {
         </button>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-4 flex flex-col gap-2 overflow-y-scroll h-5/6">
         {quizzes == null ? (
           <p>Unauthorized</p>
         ) : quizzes.length == 0 ? (
