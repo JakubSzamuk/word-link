@@ -12,18 +12,20 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
 
-  if (session == null) {
-    return NextResponse.json({ code: 401, data: null });
-  }
-  if ((await AllowUser(session!.user!.email, prisma)) == false) {
-    return NextResponse.json({ code: 401, data: null });
-  }
+  let user = await AllowUser(session!, prisma);
+  if (user == false) return NextResponse.json({ code: 401, data: null });
+
+  let whereCondition = user?.super_admin
+    ? {
+        id: body.id,
+      }
+    : {
+        id: body.id,
+        creator: session?.user?.email,
+      };
 
   let newQuiz = await prisma.quiz.update({
-    where: {
-      id: body.id,
-      creator: session?.user?.email,
-    },
+    where: whereCondition,
     data: {
       name: body.name,
       group1: JSON.stringify(body.groups[0]),

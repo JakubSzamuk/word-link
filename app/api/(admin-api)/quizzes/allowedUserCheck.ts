@@ -1,16 +1,22 @@
 import { PrismaClient } from "@prisma/client";
+import { Session } from "next-auth";
 
-const AllowUser = async (email: string, prismaClient: PrismaClient) => {
+const AllowUser = async (
+  session: Session | null | undefined,
+  prismaClient: PrismaClient
+) => {
+  if (session == null || session == undefined) return false;
+
   let userObject = await prismaClient.authorizedUser.findFirst({
     where: {
-      email: email,
+      email: session.user!.email,
     },
   });
 
-  if (userObject == null) {
+  if (userObject == null || userObject == undefined) {
     return false;
-  } else if (userObject.email == email) {
-    return true;
+  } else if (userObject.email == session.user?.email) {
+    return userObject;
   }
 };
 

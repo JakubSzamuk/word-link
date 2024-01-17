@@ -11,14 +11,10 @@ export const revalidate = 0;
 export async function GET(req: NextRequest, res: NextResponse) {
   const session = await getServerSession(authOptions);
 
-  if (session == null) {
+  if ((await AllowUser(session!, prisma)) == false)
     return NextResponse.json({ code: 401, data: null });
-  }
-  if ((await AllowUser(session!.user!.email, prisma)) == false) {
-    return NextResponse.json({ code: 401, data: null });
-  }
 
   let users = await prisma.authorizedUser.findMany();
 
-  return NextResponse.json({ code: 200, data: users || "unauthorized" });
+  return NextResponse.json({ code: 200, data: users || "Unauthorized" });
 }

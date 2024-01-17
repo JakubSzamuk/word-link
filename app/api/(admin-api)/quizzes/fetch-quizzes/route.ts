@@ -10,27 +10,12 @@ export const revalidate = 0;
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const session = await getServerSession(authOptions);
-  if (session?.user?.email == undefined) {
-    return NextResponse.json({ status: 401 });
-  }
-  if (session == null) {
-    return NextResponse.json({ code: 401, data: null });
-  }
-  if ((await AllowUser(session!.user!.email, prisma)) == false) {
-    return NextResponse.json({ code: 401, data: null });
-  }
 
-  let user = await prisma.authorizedUser.findUnique({
-    where: {
-      email: session!.user!.email,
-    },
-  });
-
-  if (user == null) {
-    return NextResponse.json({ code: 401, data: null });
-  }
+  let user = await AllowUser(session!, prisma);
+  if (user == false) return NextResponse.json({ code: 401, data: null });
 
   let quizzes;
+
   if (!user?.super_admin) {
     quizzes = await prisma.quiz.findMany({
       where: {
