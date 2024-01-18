@@ -4,13 +4,13 @@ import { redirect, usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const AdminWrapper = ({ children }) => {
+const AdminWrapper = ({ children }: any) => {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const { push } = useRouter();
   if (status === "unauthenticated") {
     redirect("/admin/login");
-    return;
+    return <div></div>;
   }
 
   return (

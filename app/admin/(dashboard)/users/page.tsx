@@ -2,22 +2,30 @@
 import React, { useEffect, useState } from "react";
 import AuthorizedUser from "./AuthorizedUser";
 import axios from "axios";
+import Errors from "@/components/Errors";
+import Loader from "@/components/Loader";
 
 export type AuthorizedUserProps = {
+  user: AuthorizedUser;
+  delete_user: (id: string) => void;
+};
+export type AuthorizedUser = {
   id: string;
   email: string;
   super_admin: boolean;
 };
 
 const Page = () => {
-  const [users, setUsers] = useState<AuthorizedUserProps[]>([]);
-  const [isAllowed, setIsAllowed] = useState<boolean>(false);
+  const [users, setUsers] = useState<AuthorizedUser[]>([]);
+  const [isAllowed, setIsAllowed] = useState<boolean>(true);
 
   useEffect(() => {
     axios.get("/api/users/fetch-users").then((data) => {
+      console.log(data);
       if (data.data.data != "unauthorized") {
         setUsers(data.data.data);
-        setIsAllowed(true);
+      } else {
+        setIsAllowed(false);
       }
     });
   }, []);
@@ -30,9 +38,9 @@ const Page = () => {
     <div className="text-white primary_font w-full">
       {users == null ? (
         isAllowed ? (
-          <p>Unauthorized</p>
+          <Loader />
         ) : (
-          <p>Loading...</p>
+          <Errors message="401, Unauthorized" />
         )
       ) : (
         <>
@@ -55,7 +63,7 @@ const Page = () => {
               users.map((user, index) => (
                 <AuthorizedUser
                   key={index}
-                  {...user}
+                  user={user}
                   delete_user={deleteUser}
                 />
               ))}

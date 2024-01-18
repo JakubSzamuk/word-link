@@ -15,7 +15,9 @@ const AllowUser = async (
 
   if (userObject == null || userObject == undefined) {
     return false;
-  } else if (userObject.email == session.user?.email) {
+  } else if (
+    userObject.email?.toLowerCase() == session.user?.email?.toLowerCase()
+  ) {
     return userObject;
   }
 };

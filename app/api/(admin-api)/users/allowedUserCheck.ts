@@ -12,11 +12,10 @@ const AllowUser = async (
       email: session.user?.email,
     },
   });
-
   if (
     userObject == null ||
     userObject.super_admin == false ||
-    userObject.email != session.user?.email
+    userObject.email?.toLowerCase() != session.user?.email?.toLowerCase()
   ) {
     return false;
   } else {

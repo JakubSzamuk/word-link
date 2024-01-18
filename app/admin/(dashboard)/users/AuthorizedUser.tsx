@@ -4,15 +4,10 @@ import React, { useState } from "react";
 import type { AuthorizedUserProps } from "./page";
 import axios from "axios";
 
-const SavedQuiz = ({
-  id,
-  email,
-  super_admin,
-  delete_user,
-}: AuthorizedUserProps) => {
-  const [isEditing, setIsEditing] = useState(id ? false : true);
-  const [emailAddress, setEmailAddress] = useState(email);
-  const [isSuper, setIsSuper] = useState(super_admin);
+const SavedQuiz = ({ user, delete_user }: AuthorizedUserProps) => {
+  const [isEditing, setIsEditing] = useState(user.id ? false : true);
+  const [emailAddress, setEmailAddress] = useState(user.email);
+  const [isSuper, setIsSuper] = useState(user.super_admin);
 
   return (
     <div className="grid grid-cols-2 xlg:flex items-center overflow-x-scroll xlg:overflow-x-auto bg-secondary rounded-md py-2 px-6 md:flex-col xlg:flex-row">
@@ -45,7 +40,7 @@ const SavedQuiz = ({
             <button
               className="text-standard px-12 py-[1px] rounded-md bg-tertiary ml-auto"
               onClick={() => {
-                setEmailAddress(email);
+                setEmailAddress(user.email);
                 setIsEditing(false);
               }}
             >
@@ -54,16 +49,16 @@ const SavedQuiz = ({
             <button
               className="text-standard py-[1px] px-12 rounded-md bg-tertiary ml-2"
               onClick={() => {
-                if (id != "") {
+                if (user.id != "") {
                   axios
                     .post("/api/users/edit-user", {
-                      id: id,
+                      id: user.id,
                       email: emailAddress,
                       superUser: isSuper,
                     })
                     .then((data) => {
-                      id = data.data.data.id;
-                      email = data.data.data.email;
+                      user.id = data.data.data.id;
+                      user.email = data.data.data.email;
                       setIsSuper(data.data.data.super_admin);
                     });
                 } else {
@@ -73,8 +68,8 @@ const SavedQuiz = ({
                       superUser: isSuper,
                     })
                     .then((data) => {
-                      id = data.data.data.id;
-                      email = data.data.data.email;
+                      user.id = data.data.data.id;
+                      user.email = data.data.data.email;
                       setIsSuper(data.data.data.super_admin);
                     });
                 }
@@ -93,8 +88,8 @@ const SavedQuiz = ({
           </button>
           <button
             onClick={() => {
-              axios.post("/api/users/delete-user", { userId: id });
-              delete_user(id);
+              axios.post("/api/users/delete-user", { userId: user.id });
+              delete_user(user.id);
             }}
           >
             <Trash size={32} color="#fff" />

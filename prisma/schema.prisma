@@ -71,10 +71,8 @@ model AuthorizedUser {
 model Quiz {
   id            String    @id @default(cuid())
   name          String?
-  group1        String?
-  group2        String?
-  group3        String?
-  group4        String?
+
+  groups        Json
   
   
   code          String?   @unique
