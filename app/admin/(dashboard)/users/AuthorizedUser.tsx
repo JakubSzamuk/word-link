@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import type { AuthorizedUserProps } from "./page";
 import axios from "axios";
 
-const SavedQuiz = ({ user, delete_user }: AuthorizedUserProps) => {
+const SavedQuiz = ({
+  user,
+  delete_user,
+  handle_popup,
+}: AuthorizedUserProps) => {
   const [isEditing, setIsEditing] = useState(user.id ? false : true);
   const [emailAddress, setEmailAddress] = useState(user.email);
   const [isSuper, setIsSuper] = useState(user.super_admin);
@@ -49,30 +53,21 @@ const SavedQuiz = ({ user, delete_user }: AuthorizedUserProps) => {
             <button
               className="text-standard py-[1px] px-12 rounded-md bg-tertiary ml-2"
               onClick={() => {
-                if (user.id != "") {
-                  axios
-                    .post("/api/users/edit-user", {
-                      id: user.id,
-                      email: emailAddress,
-                      superUser: isSuper,
-                    })
-                    .then((data) => {
-                      user.id = data.data.data.id;
-                      user.email = data.data.data.email;
-                      setIsSuper(data.data.data.super_admin);
-                    });
-                } else {
-                  axios
-                    .post("/api/users/add-user", {
-                      email: emailAddress,
-                      superUser: isSuper,
-                    })
-                    .then((data) => {
-                      user.id = data.data.data.id;
-                      user.email = data.data.data.email;
-                      setIsSuper(data.data.data.super_admin);
-                    });
-                }
+                let requestBody =
+                  user.id != ""
+                    ? { id: user.id, email: emailAddress, superUser: isSuper }
+                    : { email: emailAddress, superUser: isSuper };
+
+                axios.post("/api/users", requestBody).then((data) => {
+                  user.id = data.data.data.id;
+                  user.email = data.data.data.email;
+                  setIsSuper(data.data.data.super_admin);
+                  if (data.data.code == 200) {
+                    handle_popup(`Successfully Saved ${user.email}`, true);
+                  } else {
+                    handle_popup(`Uh oh, An error occured`, false);
+                  }
+                });
 
                 setIsEditing(false);
               }}
@@ -88,7 +83,14 @@ const SavedQuiz = ({ user, delete_user }: AuthorizedUserProps) => {
           </button>
           <button
             onClick={() => {
-              axios.post("/api/users/delete-user", { userId: user.id });
+              axios
+                .delete(`/api/users?user_id=${user.id}`)
+                .then(() => {
+                  handle_popup(`Successfully Deleted ${user.email}`, true);
+                })
+                .catch(() => {
+                  handle_popup(`Failed to Delete ${user.email}`, false);
+                });
               delete_user(user.id);
             }}
           >

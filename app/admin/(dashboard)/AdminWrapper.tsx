@@ -11,6 +11,8 @@ const AdminWrapper = ({ children }: any) => {
   if (status === "unauthenticated") {
     redirect("/admin/login");
     return <div></div>;
+  } else if (pathname == "/admin") {
+    push("/admin/quizzes");
   }
 
   return (

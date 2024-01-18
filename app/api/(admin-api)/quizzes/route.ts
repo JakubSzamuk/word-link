@@ -71,17 +71,18 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 }
 
 export async function DELETE(req: NextRequest, res: NextResponse) {
-  const body = await req.json();
+  const { searchParams } = new URL(req.url);
+
   const session = await getServerSession(authOptions);
   let user = await AllowUser(session!, prisma);
   if (user == false) return NextResponse.json({ code: 401, data: null });
 
   let whereCondition = user?.super_admin
     ? {
-        id: body.quiz_id,
+        id: searchParams.get("quiz_id")!,
       }
     : {
-        id: body.quiz_id,
+        id: searchParams.get("quiz_id")!,
         creator: session?.user?.email,
       };
 

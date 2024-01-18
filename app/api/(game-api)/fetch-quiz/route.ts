@@ -20,10 +20,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   let condensedQuiz = {
     id: quiz!.id,
     name: quiz!.name,
-    group1: JSON.parse(quiz!.group1!),
-    group2: JSON.parse(quiz!.group2!),
-    group3: JSON.parse(quiz!.group3!),
-    group4: JSON.parse(quiz!.group4!),
+    groups: quiz!.groups,
   };
 
   return NextResponse.json({ code: 200, data: condensedQuiz });

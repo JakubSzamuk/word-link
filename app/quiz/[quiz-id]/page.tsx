@@ -19,28 +19,48 @@ const WordTile = ({ word, setWordSelected, selectedWords, op }: any) => {
   );
 };
 
+type ApiResponse = {
+  data: {
+    code: number;
+    data: Quiz;
+  };
+};
+type Quiz = {
+  id: string;
+  name: string;
+
+  groups: QuizGroup[];
+};
+type QuizGroup = {
+  name: string;
+  words: string[];
+};
+
+type GameQuiz = {
+  shuffledWords: string[];
+  data: Quiz;
+};
+
 const Page = ({ params }: { params: { "quiz-id": string } }) => {
-  const [quiz, setQuiz] = useState(null);
-  const [selectedWords, setSelectedWords] = useState([]);
+  const [quiz, setQuiz] = useState<GameQuiz | null>();
+  const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [mistakes, setMistakes] = useState(0);
 
   const [submittable, setSubmittable] = useState(true);
 
-  const [selectedGroup, setSelectedGroup] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState<QuizGroup[]>([]);
 
   const [op, setOp] = useState(0);
 
   useEffect(() => {
     axios
       .post("/api/fetch-quiz", { quiz_code: params["quiz-id"].toString() })
-      .then((data) => {
+      .then((data: ApiResponse) => {
         if (data.data.code == 200) {
-          let all_words = [
-            ...data.data.data.group1.words,
-            ...data.data.data.group2.words,
-            ...data.data.data.group3.words,
-            ...data.data.data.group4.words,
-          ];
+          let all_words: string[] = [];
+          data.data.data.groups.forEach((group) => {
+            all_words.push(...group.words);
+          });
           for (var i = all_words.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
             var temp = all_words[i];
@@ -75,30 +95,29 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
       return;
     }
     let isCorrect;
-    let groupName = "";
+    let groupIndex = 0;
     for (let i = 0; i < 4; i++) {
       isCorrect = true;
       for (let j = 0; j < 4; j++) {
-        console.log(quiz.data[`group${i + 1}`].words[j]);
-        if (!selectedWords.includes(quiz.data[`group${i + 1}`].words[j])) {
+        if (!selectedWords.includes(quiz!.data.groups[i].words[j])) {
           isCorrect = false;
         }
       }
       if (isCorrect) {
-        groupName = `group${i + 1}`;
+        groupIndex = i;
         break;
       }
     }
 
     if (isCorrect) {
       setQuiz({
-        shuffledWords: quiz.shuffledWords.filter(
+        shuffledWords: quiz!.shuffledWords.filter(
           (word) => !selectedWords.includes(word)
         ),
-        data: quiz.data,
+        data: quiz!.data,
       });
       setSelectedWords([]);
-      setSelectedGroup([...selectedGroup, quiz.data[groupName]]);
+      setSelectedGroup([...selectedGroup, quiz!.data.groups[groupIndex]]);
     } else {
       setSubmittable(false);
       setMistakes(mistakes + 1);
@@ -114,13 +133,8 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
 
   useEffect(() => {
     if (mistakes == 4) {
-      setSelectedGroup([
-        quiz.data.group1,
-        quiz.data.group2,
-        quiz.data.group3,
-        quiz.data.group4,
-      ]);
-      setQuiz({ shuffledWords: [], data: quiz.data });
+      setSelectedGroup(quiz!.data.groups);
+      setQuiz({ shuffledWords: [], data: quiz!.data });
     }
   }, [mistakes]);
 

@@ -44,7 +44,7 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
             </div>
             <div className="flex flex-col xlg:flex-row items-center">
               <div className="xlg:w-1/2">
-                <h2>Join {quizInfo.name}</h2>
+                <h2>Join {quizInfo!.name}</h2>
                 <p>
                   Please enter the following Code into
                   <b> wordlink.JakubSzamuk.co.uk</b>
