@@ -31,7 +31,7 @@ const Page = () => {
 
   const fetch_users = () => {
     axios.get("/api/users").then((data) => {
-      if (data.data.code == 401) {
+      if (data.data.code == 200) {
         setUsers(data.data.data);
       } else {
         setIsAllowed(false);
