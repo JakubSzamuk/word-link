@@ -86,9 +86,6 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
       setSelectedWords([...selectedWords, word]);
     }
   };
-  if (quiz != null) {
-    console.log(quiz.data);
-  }
 
   const handleSubmit = () => {
     if (selectedWords.length != 4 || !submittable) {

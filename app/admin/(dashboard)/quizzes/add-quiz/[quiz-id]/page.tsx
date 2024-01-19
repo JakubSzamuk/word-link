@@ -13,6 +13,9 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
   const [groups, setGroups] = useState<QuizGroup[]>(
     Array.from({ length: 4 }, () => ({ name: "", words: [] }))
   );
+
+  const [error, setError] = useState("");
+
   const [quizGroupValues, setQuizGroupValues] = useState(
     Array.from({ length: 4 }, () => "")
   );
@@ -32,6 +35,26 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
   }, []);
 
   const HandleQuizSave = () => {
+    if (
+      quizName == "" ||
+      groups.some((group) => group.name == "") ||
+      groups.some((group) => group.words.length != 4)
+    ) {
+      setError("Please fill all the fields");
+      return;
+    }
+    if (
+      groups.some(
+        (group) =>
+          group.words.filter(
+            (word, i) => group.words.indexOf(word as never) != i
+          ).length != 0
+      )
+    ) {
+      setError("All words should be unique");
+      return;
+    }
+
     if (params["quiz-id"] == "new") {
       axios
         .put("/api/quizzes", {
@@ -53,6 +76,12 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
         });
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setError("");
+    }, 4000);
+  }, [error]);
 
   return (
     <div className="text-white primary_font w-full">
@@ -172,15 +201,21 @@ const Page = ({ params }: { params: { "quiz-id": string } }) => {
               </div>
             </div>
           ))}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              HandleQuizSave();
-            }}
-            className="text-button py-1 px-12 rounded-md bg-secondary xlg:ml-auto"
-          >
-            {params["quiz-id"] == "new" ? "Create" : "Save"}
-          </button>
+          <div className="flex items-center">
+            <p className="text-standard">{error}</p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                HandleQuizSave();
+              }}
+              className={`text-button py-1 px-12 rounded-md xlg:ml-auto transition-colors ${
+                error == "" ? "bg-secondary" : "bg-red-400"
+              }
+              }`}
+            >
+              {params["quiz-id"] == "new" ? "Create" : "Save"}
+            </button>
+          </div>
         </form>
       ) : (
         <Loader />

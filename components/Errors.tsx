@@ -2,7 +2,6 @@ import { Bug, ShieldWarning } from "@phosphor-icons/react";
 import React from "react";
 
 const Errors = ({ message }: { message: string }) => {
-  console.log(message.split(",")[0]);
   return (
     <div className="w-full h-full flex justify-center items-center text-white primary_font">
       <div className="flex">

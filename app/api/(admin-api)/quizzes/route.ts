@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import authOptions from "../../auth/[...nextauth]/AuthOptions";
 import AllowUser from "./allowedUserCheck";
 
 const prisma = new PrismaClient();
@@ -14,7 +14,7 @@ async function genID(len: number): Promise<string> {
     id += Math.floor(Math.random() * 10);
   }
 
-  const existing = await prisma.quiz.findUnique({
+  const existing = await prisma.quiz.findFirst({
     where: {
       code: id,
     },

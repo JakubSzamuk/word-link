@@ -2,18 +2,19 @@
 import { signOut, useSession } from "next-auth/react";
 import { redirect, usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 const AdminWrapper = ({ children }: any) => {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const { push } = useRouter();
-  if (status === "unauthenticated") {
-    redirect("/admin/login");
-    return <div></div>;
-  } else if (pathname == "/admin") {
-    push("/admin/quizzes");
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      redirect("/admin/login");
+    } else if (pathname == "/admin") {
+      push("/admin/quizzes");
+    }
+  });
 
   return (
     <div className="w-11/12 xlg:w-2/3 mt-16">
