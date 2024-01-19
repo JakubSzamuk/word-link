@@ -21,7 +21,7 @@ export type AuthorizedUser = {
 
 const Page = () => {
   const [users, setUsers] = useState<AuthorizedUser[]>([]);
-  const [isAllowed, setIsAllowed] = useState<boolean>(true);
+  const [isAllowed, setIsAllowed] = useState<string>("default");
 
   const [message, setMessage] = useState<{ code: boolean; message: string }>({
     code: false,
@@ -33,8 +33,9 @@ const Page = () => {
     axios.get("/api/users").then((data) => {
       if (data.data.code == 200) {
         setUsers(data.data.data);
+        setIsAllowed("true");
       } else {
-        setIsAllowed(false);
+        setIsAllowed("false");
       }
     });
   };
@@ -60,8 +61,8 @@ const Page = () => {
 
   return (
     <div className="text-white primary_font w-full relative">
-      {users == null ? (
-        !isAllowed && <Errors message="401, Unauthorized" />
+      {isAllowed == "false" ? (
+        <Errors message="401, Unauthorized" />
       ) : (
         <>
           <div className="flex items-center w-full">
