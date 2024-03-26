@@ -1,28 +1,28 @@
-# syntax=docker/dockerfile:1
+# Install dependencies only when needed
+FROM node:18.13.0-alpine AS deps
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --network-timeout 1000000
 
-ARG NODE_VERSION=18.17.0
 
-FROM node:${NODE_VERSION}-alpine as base
-WORKDIR /usr/src/app
-RUN yarn config set network-timeout 600000
+
+FROM node:18.13.0-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+ADD . .
+RUN yarn prisma generate
+RUN yarn build
+
+FROM node:18.13.0-alpine AS runner
+WORKDIR /app
+RUN adduser --system --uid 1001 nextjs
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma /app/prisma
+
+USER nextjs
 EXPOSE 3000
 
-FROM base as dev
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=yarn.lock,target=yarn.lock \
-    --mount=type=cache,target=/root/.npm \
-    yarn install --production --include=dev
-RUN chown -R node /usr/src/app
-USER node
-COPY . .
-CMD tail -f /usr/src/package.json
-
-FROM base as prod
-ENV NODE_ENV production
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    yarn install --production
-USER node
-COPY . .
-CMD yarn start
+CMD ["yarn", "start"]
